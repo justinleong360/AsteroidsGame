@@ -192,7 +192,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
 class Star
 {
   private int myX, myY, mySize, myColorR, myColorG, myColorB;
-  Star()
+  public Star()
   {
     myX = (int)(Math.random()*700)+1;
     myY = (int)(Math.random()*700)+1;
