@@ -1,6 +1,7 @@
 SpaceShip bob;
 Star [] stars;
 Asteroid one;
+
 public void setup() 
 {
   one = new Asteroid();
