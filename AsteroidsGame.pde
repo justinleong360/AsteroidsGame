@@ -1,15 +1,24 @@
 SpaceShip bob;
 Star [] stars;
-Asteroid one;
+Asteroid [] one;
+boolean up = false;
+boolean down = false;
+boolean left = false;
+boolean right = false;
+float friction = 1.01;
 
 public void setup() 
 {
-  one = new Asteroid();
+  one = new Asteroid[20];
   stars = new Star[100];
   bob = new SpaceShip();
   for(int i = 0; i< stars.length; i++)
   {
     stars[i] = new Star();
+  }
+    for(int i = 0; i< one.length; i++)
+  {
+    one[i] = new Asteroid();
   }
   size(700,700);
 }
@@ -20,27 +29,47 @@ public void draw()
   {
     stars[i].show();
   }
+  for(int i = 0; i< one.length; i++)
+  {
+    one[i].show();
+    one[i].move();
+  }
   bob.show();
   bob.move();
-  one.show();
+  if(left == true)
+  {
+    bob.rotate(-5);    
+  }
+  if(right == true)
+  {
+    bob.rotate(5);
+  }
+  if(up == true)
+  {
+    bob.accelerate(0.1);
+  }
+  if(down == true)
+  {
+    bob.accelerate(-0.1);
+  }
 }
 public void keyPressed()
 {
   if(keyCode == LEFT)
   {
-    bob.rotate(-15);
+    left = true;
   }
-  else if (keyCode == RIGHT)
+  if (keyCode == RIGHT)
   {
-    bob.rotate(15);
+    right = true;
   }
   if(keyCode == UP)
   {
-    bob.accelerate(0.2);
+    up = true;
   }
-  else if (keyCode == DOWN)
+  if (keyCode == DOWN)
   {
-    bob.accelerate(-0.2);
+    down = true;
   }
   if(keyCode == 74)
   {
@@ -49,6 +78,26 @@ public void keyPressed()
     bob.setDirectionX(0);
     bob.setDirectionY(0);
     bob.setPointDirection((int)(Math.random()*360));
+  }
+}
+
+public void keyReleased() 
+{
+  if(keyCode == LEFT)
+  {
+    left = false;  
+  }
+  if(keyCode == RIGHT)
+  {
+    right = false;
+  }
+  if(keyCode == UP)
+  {
+    up = false;
+  }
+  if (keyCode == DOWN)
+  {
+    down = false;
   }
 }
 
@@ -123,24 +172,27 @@ class Asteroid extends Floater
   private double rotation;
   public Asteroid()
   {
-    corners = 5;
+    int num = (int)(Math.random()*5)+2;
+    corners = 6;
     xCorners = new int[corners];
     yCorners = new int[corners];
-    xCorners[0] = (int)(Math.random()*3)+((int)(Math.random()*10)+10);
-    yCorners[0] = (int)(Math.random()*3)+((int)(Math.random()*10)+10);
-    xCorners[1] = (int)(Math.random()*3)+((int)(Math.random()*10)+10);
-    yCorners[1] = (int)(Math.random()*3)+((int)(Math.random()*10)+10);
-    xCorners[2] = (int)(Math.random()*3)+((int)(Math.random()*10)+10);
-    yCorners[2] = (int)(Math.random()*3)+((int)(Math.random()*10)+10);
-    xCorners[3] = (int)(Math.random()*3)+((int)(Math.random()*10)+10);
-    yCorners[3] = (int)(Math.random()*3)+((int)(Math.random()*10)+10);
-    xCorners[4] = (int)(Math.random()*3)+((int)(Math.random()*10)+10);
-    yCorners[4] = (int)(Math.random()*3)+((int)(Math.random()*10)+10);
+    xCorners[0]=(int)(Math.random()*4*num)+6*num;
+    yCorners[0]=(int)(Math.random()*4*num)-3*num;
+    xCorners[1]=(int)(Math.random()*4*num);
+    yCorners[1]=(int)(Math.random()*4*num)-6*num;
+    xCorners[2]=-(int)(Math.random()*4*num);
+    yCorners[2]=(int)(Math.random()*4*num)-6*num;
+    xCorners[3]=(int)(Math.random()*6*num)-6*num;
+    yCorners[3]=(int)(Math.random()*4*num)-3*num;
+    xCorners[4]=-(int)(Math.random()*4*num);
+    yCorners[4]=(int)(Math.random()*4*num)+6*num;
+    xCorners[5]=(int)(Math.random()*4*num);           
+    yCorners[5]=(int)(Math.random()*4*num)+6*num;     
     myColor = 255;
     myCenterX = (int)(Math.random()*700);
     myCenterY = (int)(Math.random()*700);
-    myDirectionX = 0;
-    myDirectionY = 0;
+    myDirectionX = Math.cos(Math.random()*2*Math.PI);
+    myDirectionY = Math.sin(Math.random()*2*Math.PI);
     myPointDirection = 0;
     rotation = Math.random();
   }
@@ -224,7 +276,9 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   {      
     //change the x and y coordinates by myDirectionX and myDirectionY       
     myCenterX += myDirectionX;    
-    myCenterY += myDirectionY;     
+    myCenterY += myDirectionY;
+    myDirectionX = myDirectionX/friction;
+    myDirectionY = myDirectionY/friction;
 
     //wrap around screen    
     if(myCenterX >width)
