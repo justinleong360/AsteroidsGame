@@ -1,24 +1,26 @@
 SpaceShip bob;
 Star [] stars;
-Asteroid [] one;
+ArrayList <Asteroid> one;
 boolean up = false;
 boolean down = false;
 boolean left = false;
 boolean right = false;
 float friction = 1.01;
+int oneNum = 21;
 
 public void setup() 
 {
-  one = new Asteroid[20];
+  one = new ArrayList <Asteroid>();
+  oneNum = 20;
   stars = new Star[100];
   bob = new SpaceShip();
   for(int i = 0; i< stars.length; i++)
   {
     stars[i] = new Star();
   }
-    for(int i = 0; i< one.length; i++)
+  for(int i = 0; i< oneNum; i++)
   {
-    one[i] = new Asteroid();
+    one.add(new Asteroid());
   }
   size(700,700);
 }
@@ -29,10 +31,17 @@ public void draw()
   {
     stars[i].show();
   }
-  for(int i = 0; i< one.length; i++)
+  for(int i = 0; i< one.size(); i++)
   {
-    one[i].show();
-    one[i].move();
+    one.get(i).show();
+    one.get(i).move();
+  }
+  for(int i = 0; i <one.size();i++)
+  {
+    if(dist(one.get(i).getX(),one.get(i).getY(),bob.getX(), bob.getY())<20)
+    {
+      one.remove(i);
+    }
   }
   bob.show();
   bob.move();
