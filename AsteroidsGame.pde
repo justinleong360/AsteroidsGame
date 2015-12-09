@@ -1,10 +1,12 @@
 SpaceShip bob;
 Star [] stars;
 ArrayList <Asteroid> one;
+ArrayList <Bullet> bullets = new ArrayList <Bullet>();
 boolean up = false;
 boolean down = false;
 boolean left = false;
 boolean right = false;
+boolean shoot = false;
 float friction = 1.01;
 int oneNum = 21;
 
@@ -27,6 +29,11 @@ public void setup()
 public void draw() 
 {
   background(0,0,0);
+  for(int i = 0; i<bullets.size(); i++)
+  {
+    bullets.get(i).move();
+    bullets.get(i).show();
+  }
   for(int i = 0; i< stars.length; i++)
   {
     stars[i].show();
@@ -38,10 +45,15 @@ public void draw()
   }
   for(int i = 0; i <one.size();i++)
   {
-    if(dist(one.get(i).getX(),one.get(i).getY(),bob.getX(), bob.getY())<20)
+    for(int x = 0; x<bullets.size();x++)
+    {
+    if(dist(one.get(i).getX(),one.get(i).getY(),bullets.get(x).getX(), bullets.get(x).getY())<10)
     {
       one.remove(i);
+      bullets.remove(x);
+      break;
     }
+  }
   }
   bob.show();
   bob.move();
@@ -87,6 +99,10 @@ public void keyPressed()
     bob.setDirectionX(0);
     bob.setDirectionY(0);
     bob.setPointDirection((int)(Math.random()*360));
+  }
+  if(keyCode == ' ')
+  {
+    bullets.add(new Bullet(bob));
   }
 }
 
@@ -247,6 +263,41 @@ class Asteroid extends Floater
     }   
   }
 }
+
+class Bullet extends Floater
+{
+  public Bullet(SpaceShip bob)
+  {
+    myColor = 255;
+    myCenterX = bob.getX();
+    myCenterY = bob.getY();
+    myPointDirection = bob.getPointDirection();
+    double dRadians = myPointDirection*(Math.PI/180);
+    myDirectionX = 5 * Math.cos(dRadians) + bob.getDirectionX();
+    myDirectionY = 5 * Math.sin(dRadians) + bob.getDirectionY();
+    
+  }
+  public void setX(int x) {myCenterX = x;}
+  public int getX() {return (int)myCenterX;}  
+  public void setY(int y) {myCenterY = y;}   
+  public int getY() {return (int)myCenterY;} 
+  public void setDirectionX(double x) {myDirectionX = x;}  
+  public double getDirectionX() {return myDirectionX;}   
+  public void setDirectionY(double y) {myDirectionY = y;}  
+  public double getDirectionY() {return myDirectionY;} 
+  public void setPointDirection(int degrees) {myPointDirection = degrees;}   
+  public double getPointDirection() {return myPointDirection;}
+  public void show()
+  {
+    ellipse((float)myCenterX, (float)myCenterY, 5, 5);
+  }
+  public void move ()   //move the floater in the current direction of travel
+  {      
+    myCenterX += myDirectionX;    
+    myCenterY += myDirectionY;
+  }
+}
+
 abstract class Floater //Do NOT modify the Floater class! Make changes in the SpaceShip class 
 {   
   protected int corners;  //the number of corners, a triangular floater has 3   
