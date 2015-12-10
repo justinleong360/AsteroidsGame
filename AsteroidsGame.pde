@@ -26,6 +26,7 @@ public void setup()
   }
   size(700,700);
 }
+
 public void draw() 
 {
   background(0,0,0);
